@@ -102,5 +102,3 @@ def testing():
     plt.plot(np.linspace(-1, 1, 2000), generate(np.linspace(-1, 1, 2000), order))
     plt.scatter(root(order), np.zeros((order)))
     plt.show()
-
-testing()
