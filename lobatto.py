@@ -15,9 +15,7 @@ def generate(x, order):
     num = np.size(x)
     poly = np.zeros((order+2, num))
     poly[0, :] = 0
-    #poly[1, :] = x
     poly[1, :] = (0)*(0-x*lg.generate(x, 0))
-    delta_x = 1e-4
     for i in range(2, order+2):
         poly[i, :] = (i-1)*(lg.generate(x, i-2)-x*lg.generate(x, i-1))
     return poly[order, :]
@@ -38,7 +36,6 @@ def bisection(init, end, convergence, order):
     if poly1*poly2 > 0:
         return init, end
     while error > convergence:
-        print 'bisec', init, end
         middle = (init+end)*0.5
         poly3 = generate(middle, order)
         if poly1*poly3 > 0:
@@ -62,7 +59,6 @@ def secant(init, end, convergence, order):
     while error > convergence:
         poly1 = generate(init, order)
         poly2 = generate(end, order)
-        print end, init, error
         slope = (poly2-poly1)/(end-init)
         end = init - poly1/slope
         poly2 = generate(end, order)
@@ -90,26 +86,21 @@ def root(order):
     :param order: Order of lobatto polynomial
     :return: Roots of a lobatto polynomial
     '''
-    sec_convergence = 1e-6
-    bi_convergence = 1e-3
-    interval = np.array([-1.0, 0, 1.0])
-    for i in range(2, order+1):
-        roots = np.zeros((i))
-        for j in range(i):
+    sec_convergence = 1e-8
+    bi_convergence = 1e-2
+    interval = np.array([-1.0+(1e-15), 0, 1.0-(1e-15)])
+    for i in range(4, order+1):
+        roots = np.zeros((i-2))
+        for j in range(i-2):
             roots[j] = biMethodRoot(interval[j], interval[j+1], i, sec_convergence, bi_convergence)
-        interval = np.concatenate((np.array([-1.0]), roots, np.array([1.0])))
-    return roots
+        interval = np.concatenate((np.array([-1.0+(1e-15)]), roots, np.array([1.0-(1e-15)])))
+    return np.concatenate((np.array([-1.0]), roots, np.array([1.0])))
 
 
 def testing():
-    order = 10
-    plt.figure()
-    plt.plot(np.linspace(-1, 1, 2000), generate(np.linspace(-1, 1, 2000), order))
+    order = 20
     plt.scatter(root(order), np.zeros((order)))
+    plt.plot(np.linspace(-1, 1, 2000), lg.generate(np.linspace(-1, 1, 2000), order))
+    plt.plot(np.linspace(-1, 1, 1000), generate(np.linspace(-1, 1, 1000), order))
     plt.show()
 
-order = 5
-#plt.scatter(root(order), np.zeros((order)))
-plt.plot(np.linspace(-1, 1, 2000), lg.generate(np.linspace(-1, 1, 2000), order))
-plt.plot(np.linspace(-1, 1, 2000), generate(np.linspace(-1, 1, 2000), order))
-plt.show()

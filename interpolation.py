@@ -3,6 +3,7 @@ __author__ = 'numguy'
 import numpy as np
 import matplotlib.pyplot as plt
 import legendre as lg
+import lobatto as lb
 
 def lagrange(x, x0, y0):
     '''
@@ -46,7 +47,7 @@ def testing_equal():
     plt.show()
 
 def testing_legendre():
-    order = 5
+    order = 8
     x0 = lg.root(order+1)
     y0 = function(x0)
     x = np.linspace(x0[0],x0[-1],100)
@@ -56,8 +57,19 @@ def testing_legendre():
     plt.plot(np.linspace(x0[0],x0[-1],100), function(np.linspace(x0[0],x0[-1],100)))
     plt.show()
 
+def testing_lobatto():
+    order = 8
+    x0 = lb.root(order+1)
+    y0 = function(x0)
+    x = np.linspace(x0[0],x0[-1],100)
+    y = lagrange(x, x0, y0)
+    plt.figure()
+    plt.plot(x,y)
+    plt.plot(np.linspace(x0[0],x0[-1],100), function(np.linspace(x0[0],x0[-1],100)))
+    plt.show()
 
-testing_legendre()
+
+testing_lobatto()
 
 
 
