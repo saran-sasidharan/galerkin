@@ -35,7 +35,7 @@ def function(x):
 
 
 def testing_equal():
-    order = 50
+    order = 4
     x0 = np.linspace(-1, 1, order+1)
     y0 = function(x0)
     x = np.linspace(-1,1,100)
@@ -46,7 +46,7 @@ def testing_equal():
     plt.show()
 
 def testing_legendre():
-    order = 50
+    order = 5
     x0 = lg.root(order+1)
     y0 = function(x0)
     x = np.linspace(x0[0],x0[-1],100)
@@ -57,7 +57,7 @@ def testing_legendre():
     plt.show()
 
 
-testing_equal()
+testing_legendre()
 
 
 
