@@ -5,6 +5,18 @@ import matplotlib.pyplot as plt
 import legendre as lg
 import lobatto as lb
 
+
+def vandermode(x, order):
+    '''
+    Monomial vandermode matrix
+    :param x: Points to be interpolated
+    :param order: Order of interpolation
+    :return: Vandermode matrix
+    '''
+    v = (np.dot(np.reshape(x, (np.size(x), 1)), np.ones((1, order+1))))**(np.arange(order+1))
+    return v
+
+
 def lagrange(x, x0, y0):
     '''
     Lagrange interpolation
@@ -12,18 +24,14 @@ def lagrange(x, x0, y0):
     :param x0: Points known in the domain
     :param y0: Known value at x0
     :return: interpolated values at x
+    L is the coefficients of lagrange interpolation polynomial
     '''
     num_nodal = np.size(x0)
-    num_points = np.size(x)
-    y = np.zeros(num_points)
-    for i in range(num_points):
-        weight = np.ones((num_nodal))
-        for j in range(num_nodal):
-            for k in range(num_nodal):
-                if j != k:
-                    weight[j] = weight[j] * ((x[i]-x0[k])/(x0[j]-x0[k]))
-            y[i] = y[i] + weight[j]*y0[j]
-    return y
+    v = vandermode(x0, num_nodal-1)
+    L = np.linalg.inv(v)
+    coefficient = np.dot(L, y0)
+    y = np.dot(vandermode(x, num_nodal-1), coefficient)
+    return y, L
 
 
 def function(x):
@@ -69,7 +77,6 @@ def testing_lobatto():
     plt.show()
 
 
-testing_lobatto()
 
 
 
