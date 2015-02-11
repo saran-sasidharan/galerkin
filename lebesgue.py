@@ -36,6 +36,18 @@ def constant(x, x0):
     return np.max(errorFunction(x, x0))
 
 
+def errorLone(x, y):
+    y_actual = ip.function(x)
+    L1 = np.sum(abs(y-y_actual))/np.sum(abs(y_actual))
+    return L1
+
+
+def errorLtwo(x, y):
+    y_actual = ip.function(x)
+    L2 = np.sqrt(np.sum((y-y_actual)**2))/np.sqrt(np.sum(y_actual**2))
+    return L2
+
+
 def testing_equal_error():
     order = 8
     x0 = np.linspace(-1, 1, order+1)
