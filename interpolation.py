@@ -31,7 +31,7 @@ def lagrange(x, x0, y0):
     L = np.linalg.inv(v)
     coefficient = np.dot(L, y0)
     y = np.dot(vandermode(x, num_nodal-1), coefficient)
-    return y, L
+    return y
 
 
 def function(x):
@@ -39,7 +39,7 @@ def function(x):
     :param x: function parameter
     :return: function value
     '''
-    y = 1.0/(1.0+50.0*x**2)
+    y = np.cos(np.pi*0.5*x)
     return y
 
 
@@ -75,7 +75,6 @@ def testing_lobatto():
     plt.plot(x,y)
     plt.plot(np.linspace(x0[0],x0[-1],100), function(np.linspace(x0[0],x0[-1],100)))
     plt.show()
-
 
 
 

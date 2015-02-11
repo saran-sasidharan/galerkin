@@ -27,12 +27,13 @@ def errorFunction(x, x0):
             y[i] = y[i] + abs(weight[j])
     return y
 
-def constant(y):
+def constant(x, x0):
     '''
-    :param y: Lebesgue function values
+    :param x: Points to be interpolated
+    :param x0: Points known in the domain
     :return: Lebesgue constant
     '''
-    return np.max(y)
+    return np.max(errorFunction(x, x0))
 
 
 def testing_equal_error():
@@ -69,8 +70,3 @@ def testing_lobatto_error():
     plt.plot(x,y)
     plt.scatter(x0,np.zeros(order+1))
     plt.show()
-
-
-testing_equal_error()
-testing_legendre_error()
-testing_lobatto_error()

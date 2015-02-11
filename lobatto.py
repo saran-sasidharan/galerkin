@@ -89,6 +89,8 @@ def root(order):
     sec_convergence = 1e-8
     bi_convergence = 1e-2
     interval = np.array([-1.0+(1e-15), 0, 1.0-(1e-15)])
+    if order==2: return np.array([-1.0, 1.0])
+    if order==3: return np.array([-1.0, 0, 1.0])
     for i in range(4, order+1):
         roots = np.zeros((i-2))
         for j in range(i-2):
