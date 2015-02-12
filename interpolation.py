@@ -34,7 +34,7 @@ def lagrange_x(x, x0, y0):
     return y
 
 
-def lagrange(x, x0, y0):
+def lagrange_y(x, x0, y0):
     num_nodal = np.size(x0)
     num_points = np.size(x)
     y = np.zeros(num_points)
@@ -48,17 +48,71 @@ def lagrange(x, x0, y0):
     return y
 
 
+def lagrange(x, x0, y0):
+    sample_points = np.size(x0)
+    interp_points = np.size(x)
+    y = np.zeros(interp_points)
+    x_numer = np.zeros((sample_points, sample_points-1))
+    x_common = np.zeros((sample_points, sample_points-1))
+    for i in range(sample_points):
+        k = 0
+        for j in range(sample_points):
+            if i != j:
+                x_common[i, k] = x0[j]
+                k += 1
+    x_denom = np.dot(np.reshape(x0, (sample_points, 1)), np.ones((1, sample_points-1)))
+    for i in range(interp_points):
+        x_numer *= 0
+        x_numer += x[i]
+        L_temp = (x_numer-x_common)/(x_denom-x_common)
+        L = np.prod(L_temp, 1)
+        y[i] = np.sum(L*y0)
+    return y
+
+def diff_lagrange(x, x0, y0):
+    sample_points = np.size(x0)
+    interp_points = np.size(x)
+    y = np.zeros(interp_points)
+    x_numer = np.zeros((sample_points, sample_points-1))
+    x_common = np.zeros((sample_points, sample_points-1))
+    for i in range(sample_points):
+        k = 0
+        for j in range(sample_points):
+            if i != j:
+                x_common[i, k] = x0[j]
+                k += 1
+    x_denom = np.dot(np.reshape(x0, (sample_points, 1)), np.ones((1, sample_points-1)))
+    for i in range(interp_points):
+        x_numer *= 0
+        x_numer += x[i]
+        temp_num = (x_numer-x_common)
+        temp_num_sum = np.zeros(sample_points)
+        for j in range(sample_points-1):
+            temp_num_sum += np.prod(np.delete(temp_num, j, 1), 1)
+        L = temp_num_sum/np.prod((x_denom-x_common), 1)
+        y[i] = np.sum(L*y0)
+    return y
+
+
+
 def function(x):
     '''
     :param x: function parameter
     :return: function value
     '''
-    y = np.cos(np.pi*x)
+    y = np.cos(np.pi*0.5*x)
     return y
 
+def diff_function(x):
+    '''
+    :param x: function parameter
+    :return: function value
+    '''
+    y = -1*np.pi*0.5*np.sin(np.pi*0.5*x)
+    return y
 
 def testing_equal():
-    order = 50
+    order = 64
     x0 = np.linspace(-1, 1, order+1)
     y0 = function(x0)
     x = np.linspace(-1, 1, 100)
@@ -89,3 +143,17 @@ def testing_lobatto():
     plt.plot(x,y)
     plt.plot(np.linspace(x0[0],x0[-1],100), function(np.linspace(x0[0],x0[-1],100)))
     plt.show()
+
+
+def testing_diff_equal():
+    order = 40
+    x0 = np.linspace(-1, 1, order+1)
+    y0 = function(x0)
+    x = np.linspace(-1, 1, 100)
+    y = diff_lagrange(x, x0, y0)
+    plt.figure()
+    plt.plot(x, y)
+    plt.plot(np.linspace(-1,1,100), diff_function(np.linspace(-1,1,100)))
+    plt.show()
+
+testing_diff_equal()
