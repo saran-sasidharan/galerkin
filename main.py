@@ -92,7 +92,7 @@ plt.xlim([-1, 1])
 plt.show()
 '''
 
-
+'''
 number_of_points = 50
 
 e_eq1 = np.zeros(63)
@@ -166,3 +166,5 @@ plt.xlabel(r'$N$', fontsize='18')
 plt.ylabel(r'$\log_{10} (error)$', fontsize='18')
 plt.xlim([2, 70])
 plt.show()
+
+'''

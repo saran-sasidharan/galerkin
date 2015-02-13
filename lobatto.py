@@ -12,13 +12,15 @@ def generate(x, order):
     :param order: order of lobatto polynomial
     :return: return the lobatto polynomial value at x for order 'order'
     '''
-    num = np.size(x)
-    poly = np.zeros((order+2, num))
-    poly[0, :] = 0
-    poly[1, :] = (0)*(0-x*lg.generate(x, 0))
-    for i in range(2, order+2):
-        poly[i, :] = (i-1)*(lg.generate(x, i-2)-x*lg.generate(x, i-1))
-    return poly[order, :]
+    #num = np.size(x)
+    #poly = np.zeros((order+2, num))
+    #poly[0, :] = 0
+    #poly[1, :] = (0)*(0-x*lg.generate(x, 0))
+    #for i in range(2, order+2):
+        #poly[i, :] = (i-1)*(lg.generate(x, i-2)-x*lg.generate(x, i-1))
+    if order <= 0: return 0
+    poly = (order-1)*(lg.generate(x, order-2)-x*lg.generate(x, order-1))
+    return poly
 
 
 def bisection(init, end, convergence, order):

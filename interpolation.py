@@ -134,7 +134,7 @@ def testing_legendre():
     plt.show()
 
 def testing_lobatto():
-    order = 8
+    order = 64
     x0 = lb.root(order+1)
     y0 = function(x0)
     x = np.linspace(x0[0],x0[-1],100)
@@ -156,4 +156,17 @@ def testing_diff_equal():
     plt.plot(np.linspace(-1,1,100), diff_function(np.linspace(-1,1,100)))
     plt.show()
 
-testing_diff_equal()
+
+def testing_diff_legendre():
+    order = 40
+    x0 = lg.root(order+1)
+    y0 = function(x0)
+    x = np.linspace(-1, 1, 100)
+    y = diff_lagrange(x, x0, y0)
+    plt.figure()
+    plt.plot(x, y)
+    plt.plot(np.linspace(-1,1,100), diff_function(np.linspace(-1,1,100)))
+    plt.show()
+
+
+testing_diff_legendre()
