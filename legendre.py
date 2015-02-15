@@ -1,7 +1,6 @@
 __author__ = 'numguy'
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def generate(x, order):
@@ -85,7 +84,7 @@ def root(order):
     :param order: Order of legendre polynomial
     :return: Roots of a legendre polynomial
     '''
-    sec_convergence = 1e-6
+    sec_convergence = 1e-14
     bi_convergence = 1e-3
     interval = np.array([-1.0, 0, 1.0])
     for i in range(2, order+1):
@@ -94,12 +93,4 @@ def root(order):
             roots[j] = biMethodRoot(interval[j], interval[j+1], i, sec_convergence, bi_convergence)
         interval = np.concatenate((np.array([-1.0]), roots, np.array([1.0])))
     return roots
-
-
-def testing():
-    order = 10
-    plt.figure()
-    plt.plot(np.linspace(-1, 1, 2000), generate(np.linspace(-1, 1, 2000), order))
-    plt.scatter(root(order), np.zeros((order)))
-    plt.show()
 

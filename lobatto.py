@@ -1,7 +1,6 @@
 __author__ = 'numguy'
 
 import numpy as np
-import matplotlib.pyplot as plt
 import legendre as lg
 
 
@@ -88,7 +87,7 @@ def root(order):
     :param order: Order of lobatto polynomial
     :return: Roots of a lobatto polynomial
     '''
-    sec_convergence = 1e-8
+    sec_convergence = 1e-14
     bi_convergence = 1e-2
     interval = np.array([-1.0+(1e-15), 0, 1.0-(1e-15)])
     if order==2: return np.array([-1.0, 1.0])
@@ -99,12 +98,3 @@ def root(order):
             roots[j] = biMethodRoot(interval[j], interval[j+1], i, sec_convergence, bi_convergence)
         interval = np.concatenate((np.array([-1.0+(1e-15)]), roots, np.array([1.0-(1e-15)])))
     return np.concatenate((np.array([-1.0]), roots, np.array([1.0])))
-
-
-def testing():
-    order = 20
-    plt.scatter(root(order), np.zeros((order)))
-    plt.plot(np.linspace(-1, 1, 2000), lg.generate(np.linspace(-1, 1, 2000), order))
-    plt.plot(np.linspace(-1, 1, 1000), generate(np.linspace(-1, 1, 1000), order))
-    plt.show()
-
