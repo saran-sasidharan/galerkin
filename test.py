@@ -3,9 +3,8 @@ __author__ = 'numguy'
 import numpy as np
 import lobatto as lb
 import integration as ig
+#import matplotlib.pyplot as plt
 
-n_lobatto = 5
-element_order = 4
 
 def lagrange(x_vector, x_find, x_index):
     '''
@@ -38,8 +37,6 @@ def diff_lagrange(x_vector, x_find, x_index):
     return diff/denom
 
 
-zeta = lb.root(n_lobatto)
-weight = ig.lobatto_weight(n_lobatto)
 
 def element_mass_matrix(element_order, weight, zeta):
     n = element_order+1
@@ -79,8 +76,58 @@ def element_diff_matrix(element_order, weight, zeta):
     return diff
 
 
+def mass_stiff(n_element, element_mat):
+    n, _ = np.shape(element_mat)
+    N = ((n-1)*n_element)+1
+    mass_mat = np.zeros((n_element, N, N))
+    for i in range(n_element):
+        k = i*(n-1)
+        mass_mat[i, k:k+n, k:k+n] = element_mat
+    stif_mat = np.sum(mass_mat, axis=0)
+    k = (n_element-1)*(n-1)
+    stif_mat[0, k:k+n-1] = stif_mat[N-1, k:k+n-1]
+    stif_mat[N-1, k:k+n-1] = 0
+    stif_mat[k:k+n-1, 0] = stif_mat[k:k+n-1, N-1]
+    stif_mat[k:k+n-1, N-1] = 0
+    return stif_mat
 
-res = element_diff_matrix(element_order, weight, zeta)
-print element_diff_matrix(element_order, weight, zeta)
-print np.sum(res)
+def diff_stiff(n_element, element_mat):
+    n, _ = np.shape(element_mat)
+    N = ((n-1)*n_element)+1
+    diff_mat = mass_stiff(n_element, element_mat)
+    diff_mat[N-1, N-1] = 0
+    return diff_mat
 
+def r_matrix(msm, dsm):
+    R_mat = np.dot(np.linalg.inv(msm), dsm)
+    return R_mat
+
+
+def x_domain(element_order, n_element, x_min=-1.0, x_max=+1.0):
+    N = (element_order*n_element)+1
+    x = np.zeros(N)
+    Dx = abs(x_max-x_min)/n_element
+    zeta = lb.root(element_order+1)
+    for i in range(n_element):
+        k = i*(element_order)
+        x[k:k+element_order] = x_min + (zeta[:-1]+1.0)*(Dx/2.0)
+        x_min = x_min+Dx
+    x[N-1] = x_max
+    return x
+
+
+n_lobatto = 5
+element_order = 4
+n_element = 4
+
+zeta = lb.root(n_lobatto)
+weight = ig.lobatto_weight(n_lobatto)
+
+edm = element_diff_matrix(element_order, weight, zeta)
+emm = element_mass_matrix(element_order, weight, zeta)
+dsm = diff_stiff(n_element, edm)
+msm = mass_stiff(n_element, emm)
+R_mat = r_matrix(msm, dsm)
+X = x_domain(element_order, n_element)
+Dx = np.min(X[1:]-X[:-1])
+print X, '\n', Dx
