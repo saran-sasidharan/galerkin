@@ -3,7 +3,7 @@ __author__ = 'numguy'
 import numpy as np
 import lobatto as lb
 import integration as ig
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 def lagrange(x_vector, x_find, x_index):
@@ -96,10 +96,11 @@ def diff_stiff(n_element, element_mat):
     N = ((n-1)*n_element)+1
     diff_mat = mass_stiff(n_element, element_mat)
     diff_mat[N-1, N-1] = 0
+    diff_mat[0, 0] = 0
     return diff_mat
 
-def r_matrix(msm, dsm):
-    R_mat = np.dot(np.linalg.inv(msm), dsm)
+def r_matrix(msm, dsm, u):
+    R_mat = np.dot(np.linalg.inv(msm), dsm)*-1*u
     return R_mat
 
 
@@ -116,18 +117,47 @@ def x_domain(element_order, n_element, x_min=-1.0, x_max=+1.0):
     return x
 
 
-n_lobatto = 5
-element_order = 4
-n_element = 4
+def dt_calc(courant, u, dx):
+    return (courant*dx)/u
+
+
+def rk_2nd(r_mat, initial, T, dt):
+    steps = np.round(T/dt)
+    steps.astype(int)
+    q = initial
+    q_half, q_temp = q*0, q*0
+    for i in np.arange(steps):
+        q_half = q + np.dot(r_mat, q)*(dt/2)
+        q_temp = q + np.dot(r_mat, q_half)*dt
+        q = q_temp
+    return q
+
+
+n_lobatto =9
+element_order = 8
+n_element = 20
+u = 2.0
+courant = 1.0/4.0
+T = 1
+
+sigma = 1.0/8.0
+X = x_domain(element_order, n_element)
+initial = np.e**(-1*(X/(2*sigma))**2)
+Dx = np.min(X[1:]-X[:-1])
+
 
 zeta = lb.root(n_lobatto)
 weight = ig.lobatto_weight(n_lobatto)
 
 edm = element_diff_matrix(element_order, weight, zeta)
-emm = element_mass_matrix(element_order, weight, zeta)
+emm = element_mass_matrix(element_order, weight, zeta)*(2.0/n_element)
 dsm = diff_stiff(n_element, edm)
 msm = mass_stiff(n_element, emm)
-R_mat = r_matrix(msm, dsm)
-X = x_domain(element_order, n_element)
-Dx = np.min(X[1:]-X[:-1])
-print X, '\n', Dx
+
+R_mat = r_matrix(msm, dsm, u)
+dt = dt_calc(courant, u, Dx)
+
+q = rk_2nd(R_mat, initial, T, dt)
+plt.plot(X, q)
+plt.show()
+
