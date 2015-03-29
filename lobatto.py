@@ -88,7 +88,7 @@ def root(order):
     :return: Roots of a lobatto polynomial
     '''
     sec_convergence = 1e-14
-    bi_convergence = 1e-2
+    bi_convergence = 1e-3
     interval = np.array([-1.0+(1e-15), 0, 1.0-(1e-15)])
     if order==2: return np.array([-1.0, 1.0])
     if order==3: return np.array([-1.0, 0, 1.0])
